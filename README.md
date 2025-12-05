@@ -1,5 +1,21 @@
-# 💫 About Me:
-👋 Hi there! I'm Rohit, currently immersed in the exciting journey of pursuing B.Tech. 🚀<br><br>📚 My academic pursuits revolve around Computer Engineering, where I am building a strong foundation in coding languages like Java, Python, HTML-CSS, along with exploring new-age technologies like Blockchain. I'm actively learning Rust and Move, languages designed for secure and efficient blockchain development.<br><br>🔗 Fascinated by the decentralized world, I'm passionate about how Blockchain technology can revolutionize industries by enabling transparency, security, and trustless systems. Whether it’s smart contracts, decentralized apps, or crypto protocols, I’m eager to contribute to the Web3 ecosystem.<br><br>🌟 Excited about the intersection of technology and innovation, I'm driven to contribute positively to the ever-evolving landscape of Computer Engineering and Blockchain development.<br><br>ऊँ गणेशाय नमः 🙏
+# 💫 About Me
+
+👋 **Hi, I'm Rohit Yadav** — a passionate **Rust Developer** and **Blockchain Enthusiast**, currently pursuing my **B.Tech in Computer Engineering** at **LJ University**.
+
+💻 I specialize in **Blockchain Development**, with hands-on experience in:  
+- **Rust**  
+- **Solana Program Development**  
+- **Move Language (Aptos)**  
+
+I build and optimize **smart contracts**, enhance **contract security**, and fix bugs to deliver scalable, efficient, and reliable blockchain solutions.
+
+🔗 Fascinated by the decentralized world, I explore how **Blockchain** brings transparency, security, and trustless systems to real-world applications. From on-chain logic to decentralized architectures — I love deep diving into Web3.
+
+🧠 Alongside blockchain, I’m also learning **Machine Learning**, focusing on model training and understanding how AI can complement decentralized systems.
+
+🚀 Driven by curiosity and innovation, my goal is to contribute to meaningful projects, push technical boundaries, and grow as a developer in the **Blockchain + AI** space.
+
+🙏 **ऊँ गणेशाय नमः**
 
 
 ## 🌐 Socials:
