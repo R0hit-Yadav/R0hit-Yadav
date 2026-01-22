@@ -9,7 +9,7 @@
 
 I build and optimize **smart contracts**, enhance **contract security**, and fix bugs to deliver scalable, efficient, and reliable blockchain solutions.
 
-🔗 Fascinated by the decentralized world, I explore how **Blockchain** brings transparency, security, and trustless systems to real-world applications. From on-chain logic to decentralized architectures — I love deep diving into Web3.
+🔗 Fascinated by the decentralized world, I explore how **Blockchain** brings transparency, security, and trustless systems to real-world applications. From on-chain logic to decentralized architectures - I love deep diving into Web3.
 
 🧠 Alongside blockchain, I’m also learning **Machine Learning**, focusing on model training and understanding how AI can complement decentralized systems.
 
