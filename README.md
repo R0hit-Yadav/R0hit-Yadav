@@ -1,11 +1,11 @@
 # 💫 About Me
 
-👋 **Hi, I'm Rohit Yadav** — a passionate **Rust Developer** and **Blockchain Enthusiast**, currently pursuing my **B.Tech in Computer Engineering** at **LJ University**.
+👋 **Hi, I'm Rohit Yadav** a passionate **Rust Developer** and **Blockchain Enthusiast**, currently pursuing my **B.Tech in Computer Engineering** at **LJ University**.
 
 💻 I specialize in **Blockchain Development**, with hands-on experience in:  
-- **Rust**  
+- **Rust**
+-  **Move Language (Aptos)**  
 - **Solana Program Development**  
-- **Move Language (Aptos)**  
 
 I build and optimize **smart contracts**, enhance **contract security**, and fix bugs to deliver scalable, efficient, and reliable blockchain solutions.
 
