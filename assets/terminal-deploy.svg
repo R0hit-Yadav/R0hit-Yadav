@@ -1,0 +1,49 @@
+<svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="termGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#161b22"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="700" height="220" rx="12" fill="url(#termGrad)" stroke="#30363d" stroke-width="1.5"/>
+
+  <!-- title bar -->
+  <rect width="700" height="34" rx="12" fill="#161b22"/>
+  <rect y="22" width="700" height="12" fill="#161b22"/>
+  <circle cx="24" cy="17" r="6" fill="#ff5f56"/>
+  <circle cx="46" cy="17" r="6" fill="#ffbd2e"/>
+  <circle cx="68" cy="17" r="6" fill="#27c93f"/>
+  <text x="350" y="22" text-anchor="middle" font-family="Fira Code, monospace" font-size="12" fill="#8b949e">rohit@web3 — contract-deploy</text>
+
+  <!-- terminal lines reveal once, then hold (fill="freeze") so the terminal never sits blank -->
+  <g font-family="Fira Code, Consolas, monospace" font-size="15">
+    <text x="24" y="70" fill="#06B6D4">$ cargo build --release</text>
+
+    <text x="24" y="98" fill="#3fb950" opacity="0">
+      ✓ Compiling smart_contract v0.1.0 ... done
+      <animate attributeName="opacity" from="0" to="1" begin="0.6s" dur="0.5s" fill="freeze"/>
+    </text>
+
+    <text x="24" y="126" fill="#8B5CF6" opacity="0">
+      $ anchor deploy --provider.cluster mainnet
+      <animate attributeName="opacity" from="0" to="1" begin="1.6s" dur="0.5s" fill="freeze"/>
+    </text>
+
+    <text x="24" y="154" fill="#3fb950" opacity="0">
+      ✓ Contract deployed: 0x9F...c1A2
+      <animate attributeName="opacity" from="0" to="1" begin="2.6s" dur="0.5s" fill="freeze"/>
+    </text>
+
+    <text x="24" y="182" fill="#06B6D4" opacity="0">
+      ✓ Status: confirmed on-chain ✔
+      <animate attributeName="opacity" from="0" to="1" begin="3.6s" dur="0.5s" fill="freeze"/>
+      <animate attributeName="opacity" values="1;0.6;1" begin="4.1s" dur="2.2s" repeatCount="indefinite"/>
+    </text>
+
+    <!-- blinking cursor -->
+    <rect x="24" y="192" width="9" height="14" fill="#8B5CF6">
+      <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+</svg>

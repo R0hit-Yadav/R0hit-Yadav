@@ -1,0 +1,97 @@
+<svg viewBox="0 0 1200 260" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="50%" stop-color="#0f1424"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+      <animate attributeName="x1" values="0%;100%;0%" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="y1" values="0%;100%;0%" dur="10s" repeatCount="indefinite"/>
+    </linearGradient>
+    <linearGradient id="nodeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="260" fill="url(#bgGrad)"/>
+
+  <!-- connecting chain lines -->
+  <g stroke="#8B5CF6" stroke-width="2" opacity="0.55">
+    <line x1="120" y1="130" x2="330" y2="80"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="3s" repeatCount="indefinite"/></line>
+    <line x1="330" y1="80" x2="540" y2="150"><animate attributeName="opacity" values="0.8;0.2;0.8" dur="3.4s" repeatCount="indefinite"/></line>
+    <line x1="540" y1="150" x2="760" y2="70"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="2.6s" repeatCount="indefinite"/></line>
+    <line x1="760" y1="70" x2="970" y2="140"><animate attributeName="opacity" values="0.8;0.2;0.8" dur="3.8s" repeatCount="indefinite"/></line>
+    <line x1="970" y1="140" x2="1150" y2="90"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="3.1s" repeatCount="indefinite"/></line>
+    <line x1="330" y1="80" x2="540" y2="150" stroke-dasharray="4 6">
+      <animate attributeName="stroke-dashoffset" values="0;-20" dur="1.5s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- moving transaction pulses along the chain -->
+  <circle r="4" fill="#06B6D4" filter="url(#glow)">
+    <animateMotion dur="4s" repeatCount="indefinite"
+      path="M120,130 L330,80 L540,150 L760,70 L970,140 L1150,90"/>
+  </circle>
+  <circle r="4" fill="#8B5CF6" filter="url(#glow)">
+    <animateMotion dur="4s" begin="2s" repeatCount="indefinite"
+      path="M120,130 L330,80 L540,150 L760,70 L970,140 L1150,90"/>
+  </circle>
+
+  <!-- block nodes -->
+  <g font-family="Fira Code, Consolas, monospace" font-size="13" fill="#e6edf3" text-anchor="middle">
+    <g filter="url(#glow)">
+      <rect x="85" y="100" width="70" height="60" rx="10" fill="url(#nodeGrad)" opacity="0.9">
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="2.4s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <text x="120" y="135">0x1A</text>
+
+    <g filter="url(#glow)">
+      <rect x="295" y="50" width="70" height="60" rx="10" fill="url(#nodeGrad)" opacity="0.9">
+        <animate attributeName="opacity" values="1;0.7;1" dur="2.8s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <text x="330" y="85">0xF3</text>
+
+    <g filter="url(#glow)">
+      <rect x="505" y="120" width="70" height="60" rx="10" fill="url(#nodeGrad)" opacity="0.9">
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="2.2s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <text x="540" y="155">0x7C</text>
+
+    <g filter="url(#glow)">
+      <rect x="725" y="40" width="70" height="60" rx="10" fill="url(#nodeGrad)" opacity="0.9">
+        <animate attributeName="opacity" values="1;0.7;1" dur="3s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <text x="760" y="75">0xB9</text>
+
+    <g filter="url(#glow)">
+      <rect x="935" y="110" width="70" height="60" rx="10" fill="url(#nodeGrad)" opacity="0.9">
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="2.6s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <text x="970" y="145">0xD2</text>
+
+    <g filter="url(#glow)">
+      <rect x="1115" y="60" width="70" height="60" rx="10" fill="url(#nodeGrad)" opacity="0.9">
+        <animate attributeName="opacity" values="1;0.7;1" dur="2.5s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <text x="1150" y="95">0x4E</text>
+  </g>
+
+  <!-- title -->
+  <text x="600" y="230" text-anchor="middle" font-family="Fira Code, Consolas, monospace" font-size="20" fill="#8B5CF6" opacity="0.85">
+    <tspan>block</tspan><tspan fill="#06B6D4">.confirmed()</tspan>
+    <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+  </text>
+</svg>

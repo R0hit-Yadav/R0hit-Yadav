@@ -1,0 +1,83 @@
+<svg viewBox="0 0 480 420" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="coreGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </radialGradient>
+    <linearGradient id="ringGradA" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.15"/>
+      <stop offset="50%" stop-color="#8B5CF6" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0.15"/>
+    </linearGradient>
+    <linearGradient id="ringGradB" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.15"/>
+      <stop offset="50%" stop-color="#06B6D4" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#06B6D4" stop-opacity="0.15"/>
+    </linearGradient>
+    <filter id="glowSoft" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="480" height="420" fill="transparent"/>
+
+  <!-- outer tilted orbit ring -->
+  <g transform="translate(240,190)">
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="14s" repeatCount="indefinite"/>
+      <ellipse cx="0" cy="0" rx="205" ry="72" fill="none" stroke="url(#ringGradA)" stroke-width="1.4" opacity="0.7"/>
+      <circle r="6" fill="#8B5CF6" filter="url(#glowSoft)">
+        <animateMotion dur="14s" repeatCount="indefinite" rotate="auto"
+          path="M -205,0 A 205,72 0 1,1 205,0 A 205,72 0 1,1 -205,0"/>
+      </circle>
+      <circle r="4" fill="#06B6D4" filter="url(#glowSoft)">
+        <animateMotion dur="14s" begin="-7s" repeatCount="indefinite" rotate="auto"
+          path="M -205,0 A 205,72 0 1,1 205,0 A 205,72 0 1,1 -205,0"/>
+      </circle>
+    </g>
+
+    <!-- middle orbit ring, opposite spin -->
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="360 0 0" to="0 0 0" dur="10s" repeatCount="indefinite"/>
+      <ellipse cx="0" cy="0" rx="150" ry="150" fill="none" stroke="url(#ringGradB)" stroke-width="1.2" opacity="0.55"
+        transform="rotate(55)"/>
+      <circle r="5" fill="#06B6D4" filter="url(#glowSoft)">
+        <animateMotion dur="10s" repeatCount="indefinite" rotate="auto"
+          path="M -106,-106 A 150,150 0 1,1 106,106 A 150,150 0 1,1 -106,-106"
+          keyPoints="0;1" keyTimes="0;1"/>
+      </circle>
+    </g>
+
+    <!-- inner orbit ring -->
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="7s" repeatCount="indefinite"/>
+      <ellipse cx="0" cy="0" rx="112" ry="40" fill="none" stroke="url(#ringGradA)" stroke-width="1.4" opacity="0.8"/>
+      <circle r="5" fill="#8B5CF6" filter="url(#glowSoft)">
+        <animateMotion dur="7s" repeatCount="indefinite" rotate="auto"
+          path="M -112,0 A 112,40 0 1,1 112,0 A 112,40 0 1,1 -112,0"/>
+      </circle>
+    </g>
+
+    <!-- genesis core -->
+    <g filter="url(#glowSoft)">
+      <polygon points="0,-38 33,-19 33,19 0,38 -33,19 -33,-19" fill="url(#coreGrad)" opacity="0.95">
+        <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="20s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.75;1;0.75" dur="2.4s" repeatCount="indefinite"/>
+      </polygon>
+      <text x="0" y="7" text-anchor="middle" font-family="Fira Code, Consolas, monospace" font-size="15" font-weight="700" fill="#0d1117">0x</text>
+    </g>
+  </g>
+
+  <!-- caption -->
+  <g font-family="Fira Code, Consolas, monospace" text-anchor="middle">
+    <text x="240" y="378" font-size="16" fill="#8B5CF6" opacity="0.9">
+      decentralized <tspan fill="#06B6D4">·</tspan> verifiable <tspan fill="#06B6D4">·</tspan> unstoppable
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="3.5s" repeatCount="indefinite"/>
+    </text>
+    <text x="240" y="402" font-size="12.5" fill="#8b949e">consensus reached across 3 orbiting validator rings</text>
+  </g>
+</svg>

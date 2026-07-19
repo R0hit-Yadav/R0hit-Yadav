@@ -1,0 +1,58 @@
+<svg viewBox="0 0 1200 60" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fadeMask" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="white" stop-opacity="0"/>
+      <stop offset="8%" stop-color="white" stop-opacity="1"/>
+      <stop offset="92%" stop-color="white" stop-opacity="1"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+    <mask id="edgeFade">
+      <rect x="0" y="0" width="1200" height="60" fill="url(#fadeMask)"/>
+    </mask>
+  </defs>
+
+  <rect width="1200" height="60" fill="#0d1117"/>
+
+  <g mask="url(#edgeFade)">
+    <g font-family="Fira Code, Consolas, monospace" font-size="18" fill="#8B5CF6">
+      <text x="0" y="36">
+        <tspan fill="#06B6D4">Rust</tspan> ·
+        <tspan fill="#8B5CF6"> Move (Aptos)</tspan> ·
+        <tspan fill="#06B6D4"> Solana</tspan> ·
+        <tspan fill="#8B5CF6"> Anchor</tspan> ·
+        <tspan fill="#06B6D4"> Solidity</tspan> ·
+        <tspan fill="#8B5CF6"> Foundry</tspan> ·
+        <tspan fill="#06B6D4"> Hardhat</tspan> ·
+        <tspan fill="#8B5CF6"> ethers.js</tspan> ·
+        <tspan fill="#06B6D4"> Web3.js</tspan> ·
+        <tspan fill="#8B5CF6"> IPFS</tspan> ·
+        <tspan fill="#06B6D4"> TypeScript</tspan> ·
+        <tspan fill="#8B5CF6"> React</tspan> ·
+        <tspan fill="#06B6D4"> Node.js</tspan> ·
+        <tspan fill="#8B5CF6"> Python</tspan> ·
+        <tspan fill="#06B6D4"> PyTorch</tspan> ·
+        <animateTransform attributeName="transform" type="translate"
+          from="1500 0" to="-1500 0" dur="21s" repeatCount="indefinite"/>
+      </text>
+      <text x="1500" y="36">
+        <tspan fill="#06B6D4">Rust</tspan> ·
+        <tspan fill="#8B5CF6"> Move (Aptos)</tspan> ·
+        <tspan fill="#06B6D4"> Solana</tspan> ·
+        <tspan fill="#8B5CF6"> Anchor</tspan> ·
+        <tspan fill="#06B6D4"> Solidity</tspan> ·
+        <tspan fill="#8B5CF6"> Foundry</tspan> ·
+        <tspan fill="#06B6D4"> Hardhat</tspan> ·
+        <tspan fill="#8B5CF6"> ethers.js</tspan> ·
+        <tspan fill="#06B6D4"> Web3.js</tspan> ·
+        <tspan fill="#8B5CF6"> IPFS</tspan> ·
+        <tspan fill="#06B6D4"> TypeScript</tspan> ·
+        <tspan fill="#8B5CF6"> React</tspan> ·
+        <tspan fill="#06B6D4"> Node.js</tspan> ·
+        <tspan fill="#8B5CF6"> Python</tspan> ·
+        <tspan fill="#06B6D4"> PyTorch</tspan> ·
+        <animateTransform attributeName="transform" type="translate"
+          from="3000 0" to="0 0" dur="21s" repeatCount="indefinite"/>
+      </text>
+    </g>
+  </g>
+</svg>
