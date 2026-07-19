@@ -4,7 +4,7 @@
 
 <img src="https://readme-typing-svg.demolab.com?font=Orbitron&weight=800&size=48&duration=3000&pause=100000&color=8B5CF6&center=true&vCenter=true&width=700&height=64&lines=ROHIT+YADAV&repeat=false" alt="Rohit Yadav"/>
 
-<img src="https://readme-typing-svg.demolab.com?font=Orbitron&weight=600&size=19&duration=3200&pause=100000&color=06B6D4&center=true&vCenter=true&width=850&height=36&lines=Blockchain+Engineer+%E2%80%94+Rust+%2F+Move+%2F+Solana+%2F+Solidity&repeat=false" alt="Blockchain Developer - Rust / Move / Solana / Solidity"/>
+<img src="https://readme-typing-svg.demolab.com?font=Orbitron&weight=600&size=19&duration=3200&pause=100000&color=06B6D4&center=true&vCenter=true&width=850&height=36&lines=Blockchain+Developer+%E2%80%94+Rust+%2F+Move+%2F+Solana+%2F+Solidity&repeat=false" alt="Blockchain Developer - Rust / Move / Solana / Solidity"/>
 
 <br/>
 
