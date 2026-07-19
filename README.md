@@ -4,7 +4,7 @@
 
 <img src="https://readme-typing-svg.demolab.com?font=Orbitron&weight=800&size=48&duration=3000&pause=100000&color=8B5CF6&center=true&vCenter=true&width=700&height=64&lines=ROHIT+YADAV&repeat=false" alt="Rohit Yadav"/>
 
-<img src="https://readme-typing-svg.demolab.com?font=Orbitron&weight=600&size=19&duration=3200&pause=100000&color=06B6D4&center=true&vCenter=true&width=850&height=36&lines=Blockchain+Engineer+%E2%80%94+Rust+%2F+Move+%2F+Solana+%2F+Solidity&repeat=false" alt="Blockchain Engineer — Rust / Move / Solana / Solidity"/>
+<img src="https://readme-typing-svg.demolab.com?font=Orbitron&weight=600&size=19&duration=3200&pause=100000&color=06B6D4&center=true&vCenter=true&width=850&height=36&lines=Blockchain+Engineer+%E2%80%94+Rust+%2F+Move+%2F+Solana+%2F+Solidity&repeat=false" alt="Blockchain Developer - Rust / Move / Solana / Solidity"/>
 
 <br/>
 
@@ -27,7 +27,7 @@
 
 </div>
 
-<!-- 🔗 custom animated blockchain-network banner — commit the /assets folder alongside this README -->
+<!-- 🔗 custom animated blockchain-network banner - commit the /assets folder alongside this README -->
 <p align="center">
   <img src="./assets/blockchain-network.svg" width="100%" alt="animated blockchain network"/>
 </p>
@@ -81,9 +81,9 @@ fn main() {
 }
 ```
 
-- 🔐 I design, build and harden **smart contracts** across Solana, Aptos (Move), and EVM chains — writing secure, gas-efficient logic that holds up on mainnet.
-- ⛓️ Fascinated by how decentralization brings transparency and trustless guarantees to real-world systems — from on-chain program logic to full protocol architecture.
-- 🧠 Currently expanding into **Machine Learning** — model training and exploring where AI meets decentralized systems.
+- 🔐 I design, build and harden **smart contracts** across Solana, Aptos (Move), and EVM chains - writing secure, gas-efficient logic that holds up on mainnet.
+- ⛓️ Fascinated by how decentralization brings transparency and trustless guarantees to real-world systems - from on-chain program logic to full protocol architecture.
+- 🧠 Currently expanding into **Machine Learning** - model training and exploring where AI meets decentralized systems.
 - 🚀 Driven by curiosity, my goal is to contribute to meaningful Web3 + AI projects and keep pushing technical boundaries.
 - 🙏 **ऊँ गणेशाय नमः**
 
@@ -139,7 +139,7 @@ fn main() {
 
 ### 🚀 Featured Projects
 
-<p align="center"><sub>Live cards pulled straight from my GitHub repos — stars & descriptions stay in sync automatically.</sub></p>
+<p align="center"><sub>Live cards pulled straight from my GitHub repos - stars & descriptions stay in sync automatically.</sub></p>
 
 <table align="center">
 <tr>
@@ -181,7 +181,7 @@ fn main() {
 
 ### 🧊 3D Contribution Calendar
 
-<!-- rotating 3D contribution graph — auto-generates once the yoshi389111/github-profile-3d-contrib
+<!-- rotating 3D contribution graph - auto-generates once the yoshi389111/github-profile-3d-contrib
      GitHub Action is added to a repo named R0hit-Yadav/R0hit-Yadav -->
 <div align="center">
   <img src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/output/github-contribution-grid-snake-dark.svg" width="100%" alt="snake animation"/>
@@ -235,7 +235,7 @@ fn main() {
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:06B6D4,50:8B5CF6,100:0D1117&height=140&section=footer" width="100%"/>
 
-**Thanks for stopping by — let's build something on-chain together! ⛓️**
+**Thanks for stopping by - let's build something on-chain together! ⛓️**
 
 </div>
 
