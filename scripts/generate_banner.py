@@ -15,9 +15,17 @@ import numpy as np
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1]
-PHOTO = Path("/home/rohit/Rohit/Work/GithubReadme/Rohit.jpg")
+ASSETS = Path("/home/rohit/Rohit/Work/GithubReadme")
+PHOTO = ASSETS / "Rohit_professional.png"
 OUT_DIR = ROOT
 
+# Morph logos (dithered from real images — replaces hand-drawn glyphs)
+LOGO_IMAGES = [
+    ASSETS / "Bitcoin.jpg",
+    ASSETS / "ETH.png",
+    ASSETS / "NFT.png",
+    ASSETS / "Chain.jpg",
+]
 # Portrait grid — match arifhaxn frame math exactly
 # Frame: x=36,y=84 w=400 h=492 · portrait translate(50,86) scale(1.24,1.4471)
 # → 300*1.24=372 wide (14px side inset) · 340*1.4471≈492 tall (flush)
@@ -358,68 +366,100 @@ def dots_to_coords(dots: np.ndarray) -> np.ndarray:
     return np.stack([xs, ys], axis=1).astype(np.float64)
 
 
+def dither_logo_image(path: Path, canvas_w: int = GRID_W, canvas_h: int = GRID_H) -> np.ndarray:
+    """
+    Convert a logo/photo into a centered dithered point cloud on the portrait grid.
+    Bright/metallic/white features become ink (works for Bitcoin, ETH, NFT on black).
+    """
+    from scipy import ndimage
+
+    im = Image.open(path)
+    # Flatten alpha onto black
+    if im.mode in ("RGBA", "LA") or (im.mode == "P" and "transparency" in im.info):
+        rgba = im.convert("RGBA")
+        bg = Image.new("RGBA", rgba.size, (0, 0, 0, 255))
+        im = Image.alpha_composite(bg, rgba).convert("RGB")
+    else:
+        im = im.convert("RGB")
+
+    arr = np.asarray(im).astype(np.float32)
+    # Content mask: not near-black
+    lum = 0.299 * arr[:, :, 0] + 0.587 * arr[:, :, 1] + 0.114 * arr[:, :, 2]
+    # Also keep saturated cyan/teal (Chain network overlay)
+    r, g, b = arr[:, :, 0], arr[:, :, 1], arr[:, :, 2]
+    teal = (b > 80) & (g > 60) & (b + g > r + 40)
+    content = (lum > 28) | teal
+
+    # Keep largest blob
+    content = ndimage.binary_closing(content, iterations=2)
+    content = ndimage.binary_fill_holes(content)
+    labeled, n = ndimage.label(content)
+    if n:
+        sizes = ndimage.sum(content, labeled, range(1, n + 1))
+        content = labeled == (int(np.argmax(sizes)) + 1)
+
+    ys, xs = np.where(content)
+    if len(xs) < 50:
+        # fallback: whole image
+        ys, xs = np.mgrid[0 : arr.shape[0], 0 : arr.shape[1]]
+        ys, xs = ys.ravel(), xs.ravel()
+        x0, x1, y0, y1 = 0, arr.shape[1], 0, arr.shape[0]
+    else:
+        pad = 8
+        x0 = max(0, int(xs.min()) - pad)
+        x1 = min(arr.shape[1], int(xs.max()) + pad + 1)
+        y0 = max(0, int(ys.min()) - pad)
+        y1 = min(arr.shape[0], int(ys.max()) + pad + 1)
+
+    crop = im.crop((x0, y0, x1, y1))
+    # Fit inside ~78% of canvas
+    max_w, max_h = int(canvas_w * 0.78), int(canvas_h * 0.78)
+    tw, th = crop.size
+    scale = min(max_w / tw, max_h / th)
+    nw, nh = max(1, int(tw * scale)), max(1, int(th * scale))
+    crop = crop.resize((nw, nh), Image.Resampling.LANCZOS)
+
+    g = ImageOps.grayscale(crop)
+    g = ImageOps.autocontrast(g, cutoff=2)
+    g = ImageEnhance.Contrast(g).enhance(1.55)
+    g = g.filter(ImageFilter.UnsharpMask(radius=2, percent=120, threshold=2))
+    gray = np.asarray(g).astype(np.float32)
+
+    # Bright features → ink
+    target = 255.0 - gray
+    # Extra boost for midtones so logos read clearly at small size
+    target = np.clip(target * 1.15, 0, 255)
+    dots = floyd_steinberg(target)
+
+    # Center on canvas
+    canvas = np.zeros((canvas_h, canvas_w), dtype=bool)
+    ox = (canvas_w - nw) // 2
+    oy = (canvas_h - nh) // 2
+    canvas[oy : oy + nh, ox : ox + nw] = dots
+    return dots_to_coords(canvas)
+
+
 def logo_shapes() -> list[np.ndarray]:
-    """Three logo point clouds in grid space (300x340)."""
+    """Dithered morph targets from Bitcoin / ETH / NFT / Chain images."""
     logos = []
-
-    # 1) Rust-inspired gear ring + inner R stem
-    pts = []
-    cx, cy, r = 150, 170, 78
-    for a in np.linspace(0, 2 * math.pi, 120, endpoint=False):
-        for rr in (r - 4, r, r + 4):
-            pts.append((cx + rr * math.cos(a), cy + rr * math.sin(a)))
-        # teeth
-        if int(a / (math.pi / 6)) % 2 == 0:
-            for rr in np.linspace(r + 6, r + 18, 6):
-                pts.append((cx + rr * math.cos(a), cy + rr * math.sin(a)))
-    for y in range(130, 220):
-        for x in range(138, 162):
-            if abs(x - 150) < 8 or (y > 200 and abs(x - 150) < 22):
-                pts.append((x, y))
-    logos.append(np.array(pts, dtype=np.float64))
-
-    # 2) Blockchain hexagon chain
-    pts = []
-    def hexagon(hx, hy, rad):
-        out = []
-        for i in range(6):
-            a = math.pi / 6 + i * math.pi / 3
-            out.append((hx + rad * math.cos(a), hy + rad * math.sin(a)))
-        # edges sampled
-        edge = []
-        for i in range(6):
-            x0, y0 = out[i]
-            x1, y1 = out[(i + 1) % 6]
-            for t in np.linspace(0, 1, 14):
-                edge.append((x0 + (x1 - x0) * t, y0 + (y1 - y0) * t))
-        return edge
-
-    for hx, hy in ((110, 150), (190, 150), (150, 210)):
-        pts.extend(hexagon(hx, hy, 42))
-        pts.extend(hexagon(hx, hy, 28))
-    # links
-    for x in range(130, 170):
-        pts.append((x, 165))
-        pts.append((x, 195))
-    logos.append(np.array(pts, dtype=np.float64))
-
-    # 3) </> code glyph
-    pts = []
-    # <
-    for t in np.linspace(0, 1, 50):
-        pts.append((150 - 55 * t, 120 + 50 * t))
-        pts.append((150 - 55 * t, 220 - 50 * t))
-    for t in np.linspace(0, 1, 40):
-        pts.append((95 + 10 * t, 170))
-    # /
-    for t in np.linspace(0, 1, 60):
-        pts.append((130 + 40 * t, 230 - 110 * t))
-    # >
-    for t in np.linspace(0, 1, 50):
-        pts.append((150 + 55 * t, 120 + 50 * t))
-        pts.append((150 + 55 * t, 220 - 50 * t))
-    logos.append(np.array(pts, dtype=np.float64))
-
+    for path in LOGO_IMAGES:
+        if not path.exists():
+            print(f"[warn] missing logo image: {path}")
+            continue
+        pts = dither_logo_image(path)
+        print(f"  logo {path.name}: {len(pts)} dots")
+        # Save debug preview
+        debug = OUT_DIR / "scripts" / "debug"
+        debug.mkdir(parents=True, exist_ok=True)
+        prev = np.zeros((GRID_H, GRID_W, 3), dtype=np.uint8)
+        prev[:, :] = (10, 16, 31)
+        for x, y in pts.astype(int):
+            if 0 <= x < GRID_W and 0 <= y < GRID_H:
+                prev[y, x] = (34, 211, 238)
+        Image.fromarray(prev).save(debug / f"logo_{path.stem}.png")
+        logos.append(pts)
+    if not logos:
+        raise RuntimeError("No logo images found to dither")
     return logos
 
 
@@ -617,16 +657,8 @@ def build_svg(theme_name: str, dots: np.ndarray) -> str:
     logos = logo_shapes()
     first_centroid = logos[0].mean(axis=0)
 
-    if len(coords) >= N_TRAVELLERS:
-        t_idx = NP_RNG.choice(len(coords), size=N_TRAVELLERS, replace=False)
-        travellers_src = coords[t_idx]
-    else:
-        travellers_src = sample_points(coords, N_TRAVELLERS)
-
-    logo_targets = [
-        optimal_transport_match(travellers_src, sample_points(lg, N_TRAVELLERS))
-        for lg in logos
-    ]
+    # Full dithered logos for morph frames (opacity crossfade — denser = clearer)
+    logo_targets = logos
 
     pt = portrait_transform()
     parts: list[str] = []
@@ -685,8 +717,11 @@ def build_svg(theme_name: str, dots: np.ndarray) -> str:
         )
     parts.append("</g>\n")
 
-    kt = "0;0.211;0.303;0.444;0.535;0.676;0.768;0.908;1"
-    op_vals = "1;1;0;0;0;0;0;0;1"
+    # Loop timing for portrait + 4 logos (Bitcoin → ETH → NFT → Chain)
+    # portrait 2.8s, trans 1.0s × 5, logo hold 1.6s × 4  = 14.2s
+    # keyTimes @ 0, 2.8, 3.8, 5.4, 6.4, 8.0, 9.0, 10.6, 11.6, 13.2, 14.2
+    kt = "0;0.197;0.268;0.380;0.451;0.563;0.634;0.746;0.817;0.930;1"
+    op_vals = "1;1;0;0;0;0;0;0;0;0;1"
 
     # Drift loop
     parts.append(
@@ -709,7 +744,14 @@ def build_svg(theme_name: str, dots: np.ndarray) -> str:
         d = "".join(pack_runs(gdots))
         if not d:
             continue
-        tv = f"0 0;0 0;{dx:.1f} {dy:.1f};{dx:.1f} {dy:.1f};{dx * 0.3:.1f} {dy * 0.3:.1f};{dx * 0.3:.1f} {dy * 0.3:.1f};{-dx * 0.2:.1f} {-dy * 0.2:.1f};0 0;0 0"
+        tv = (
+            f"0 0;0 0;"
+            f"{dx:.1f} {dy:.1f};{dx:.1f} {dy:.1f};"
+            f"{dx*0.4:.1f} {dy*0.4:.1f};{dx*0.4:.1f} {dy*0.4:.1f};"
+            f"{-dx*0.3:.1f} {-dy*0.3:.1f};{-dx*0.3:.1f} {-dy*0.3:.1f};"
+            f"{dx*0.25:.1f} {dy*0.25:.1f};{dx*0.25:.1f} {dy*0.25:.1f};"
+            f"0 0"
+        )
         parts.append(
             f'''<g>
   <animate attributeName="opacity" values="{op_vals}" keyTimes="{kt}" dur="{LOOP_DUR}s" begin="{INTRO_END}s" repeatCount="indefinite" calcMode="linear"/>
@@ -719,21 +761,25 @@ def build_svg(theme_name: str, dots: np.ndarray) -> str:
         )
     parts.append("</g>\n")
 
+    # Logo opacity schedules (hidden during portrait, one logo at a time)
     logo_op = [
-        "0;0;0;1;1;0;0;0;0",
-        "0;0;0;0;0;1;1;0;0",
-        "0;0;0;0;0;0;0;1;0",
+        "0;0;1;1;0;0;0;0;0;0;0",  # Bitcoin
+        "0;0;0;0;1;1;0;0;0;0;0",  # ETH
+        "0;0;0;0;0;0;1;1;0;0;0",  # NFT
+        "0;0;0;0;0;0;0;0;1;1;0",  # Chain
     ]
     parts.append(
         f'<g transform="{pt}" fill="{theme["chrome"]}" shape-rendering="crispEdges">\n'
     )
     for li, target in enumerate(logo_targets):
-        d = path_from_points(target, size=2)
+        # size=1 keeps file smaller while full logo density stays sharp
+        d = path_from_points(target, size=1)
         if not d:
             continue
+        op = logo_op[li] if li < len(logo_op) else logo_op[-1]
         parts.append(
             f'''<g opacity="0">
-  <animate attributeName="opacity" values="{logo_op[li]}" keyTimes="{kt}" dur="{LOOP_DUR}s" begin="{INTRO_END}s" repeatCount="indefinite"/>
+  <animate attributeName="opacity" values="{op}" keyTimes="{kt}" dur="{LOOP_DUR}s" begin="{INTRO_END}s" repeatCount="indefinite"/>
   <path d="{d}"/>
 </g>\n'''
         )
