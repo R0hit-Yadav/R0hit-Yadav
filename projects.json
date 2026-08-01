@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Web3 Rust X Blockchain",
+    "repo": "R0hit-Yadav/Web3_Rust_X_Blockchain",
+    "logo": "rust-chain.png",
+    "description": "Rust-powered Web3 toolkit — on-chain programs, clients & blockchain primitives",
+    "tags": ["Rust", "Web3", "Solana"]
+  },
+  {
+    "name": "Move Aptos",
+    "repo": "R0hit-Yadav/Move_Aptos",
+    "logo": "aptos.png",
+    "description": "Smart contracts & modules written in Move on the Aptos network",
+    "tags": ["Move", "Aptos", "Contracts"]
+  },
+  {
+    "name": "Solana Token",
+    "repo": "R0hit-Yadav/Solana_Token",
+    "logo": "solana.png",
+    "description": "SPL token programs, minting flows and Solana program architecture",
+    "tags": ["Solana", "SPL", "Anchor"]
+  },
+  {
+    "name": "Soroban Integration",
+    "repo": "R0hit-Yadav/Soroban_Integration",
+    "logo": "stellar.png",
+    "description": "Stellar Soroban smart contracts & TypeScript integration layer",
+    "tags": ["Soroban", "Stellar", "Rust"]
+  },
+  {
+    "name": "DAO Voting System",
+    "repo": "R0hit-Yadav/DAO_Voting_System",
+    "logo": "dao.png",
+    "description": "Decentralized governance — proposal creation, voting and tallying on-chain",
+    "tags": ["DAO", "Governance", "EVM"]
+  },
+  {
+    "name": "Hack IIT-K 2025",
+    "repo": "R0hit-Yadav/Hack-IIT-K-2025",
+    "logo": "hack.png",
+    "description": "IIT Kanpur Cybersecurity & Blockchain hackathon build",
+    "tags": ["Hackathon", "Security", "Blockchain"]
+  }
+]
