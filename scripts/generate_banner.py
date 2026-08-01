@@ -37,12 +37,11 @@ FRAME_X, FRAME_Y = 36, 84
 
 # Timing
 INTRO_END = 3.2
-LOOP_DUR = 14.2
+LOOP_DUR = 13.9
 
 N_INTRO_GROUPS = 60
 N_DRIFT_BANDS = 94
-N_TRAVELLERS = 1100
-N_MORPH_GROUPS = 140  # particle clusters that fly between shapes
+N_TRAVELLERS = 1200  # arifhaxn-style individual flying particles
 
 RNG = random.Random(42)
 NP_RNG = np.random.default_rng(42)
@@ -404,8 +403,9 @@ def dither_logo_image(path: Path, canvas_w: int = GRID_W, canvas_h: int = GRID_H
         y1 = min(arr.shape[0], int(ys.max()) + pad + 1)
 
     crop = im.crop((x0, y0, x1, y1))
-    # Leave ~18% margin so logos never clip the VISUAL.MAP frame
-    max_w, max_h = int(canvas_w * 0.70), int(canvas_h * 0.70)
+    # Keep logos smaller so ETH diamond / Bitcoin circle never clip the frame
+    fit = 0.58 if "eth" in path.name.lower() else 0.64
+    max_w, max_h = int(canvas_w * fit), int(canvas_h * fit)
     tw, th = crop.size
     scale = min(max_w / tw, max_h / th)
     nw, nh = max(1, int(tw * scale)), max(1, int(th * scale))
@@ -413,11 +413,27 @@ def dither_logo_image(path: Path, canvas_w: int = GRID_W, canvas_h: int = GRID_H
 
     g = ImageOps.grayscale(crop)
     g = ImageOps.autocontrast(g, cutoff=2)
-    g = ImageEnhance.Contrast(g).enhance(1.6)
-    g = g.filter(ImageFilter.UnsharpMask(radius=2, percent=130, threshold=2))
+    g = ImageEnhance.Contrast(g).enhance(1.75)
+    g = g.filter(ImageFilter.UnsharpMask(radius=2, percent=150, threshold=2))
     gray = np.asarray(g).astype(np.float32)
 
-    target = np.clip((255.0 - gray) * 1.2, 0, 255)
+    from scipy import ndimage as ndi
+
+    if "eth" in path.name.lower():
+        # Keep full diamond including darker lower facets (no edge wipe)
+        target = np.clip((255.0 - gray) * 1.15, 0, 255)
+        # Lift shadowed metal so bottom shards stay visible
+        metal = (gray > 12) & (gray < 140)
+        target = np.where(metal, np.maximum(target, 160), target)
+        # Hard-clear pure black bg
+        target = np.where(gray < 10, 255, target)
+    else:
+        target = np.clip((255.0 - gray) * 1.25, 0, 255)
+        edges = ndi.gaussian_gradient_magnitude(gray, sigma=1.2)
+        edges = edges / (edges.max() + 1e-6)
+        target = np.clip(target * (0.55 + 0.85 * edges), 0, 255)
+        target = np.where(gray < 10, 255, target)
+
     dots = floyd_steinberg(target)
 
     canvas = np.zeros((canvas_h, canvas_w), dtype=bool)
@@ -621,16 +637,19 @@ def portrait_transform() -> str:
 
 
 def build_svg(theme_name: str, dots: np.ndarray) -> str:
+    """Banner SVG with arifhaxn-style particle morph (per-dot OT travellers)."""
     theme = THEMES[theme_name]
     coords = dots_to_coords(dots)
     print(f"[{theme_name}] portrait dots: {len(coords)}")
 
+    # Intro groups
     indices = list(range(len(coords)))
     RNG.shuffle(indices)
     intro_groups = [[] for _ in range(N_INTRO_GROUPS)]
     for i, idx in enumerate(indices):
         intro_groups[i % N_INTRO_GROUPS].append(coords[idx])
 
+    # Drift bands for portrait dissolve
     noisy = coords + NP_RNG.normal(0, 4.0, size=coords.shape)
     cx, cy = coords.mean(axis=0)
     ang = np.arctan2(noisy[:, 1] - cy, noisy[:, 0] - cx)
@@ -642,34 +661,31 @@ def build_svg(theme_name: str, dots: np.ndarray) -> str:
     logos = logo_shapes()
     first_centroid = logos[0].mean(axis=0)
 
+    # Travellers: OT chain portrait → btc → eth → nft → portrait (arifhaxn style)
     if len(coords) >= N_TRAVELLERS:
         t_idx = NP_RNG.choice(len(coords), size=N_TRAVELLERS, replace=False)
-        port_pts = coords[t_idx].copy()
+        port_pts = coords[t_idx].astype(np.float64)
     else:
         port_pts = sample_points(coords, N_TRAVELLERS)
 
     stages = [port_pts]
     cur = port_pts
     for lg in logos:
-        matched = optimal_transport_match(cur, sample_points(lg, N_TRAVELLERS))
-        stages.append(matched)
-        cur = matched
+        nxt = optimal_transport_match(cur, sample_points(lg, N_TRAVELLERS))
+        stages.append(nxt)
+        cur = nxt
     stages.append(optimal_transport_match(cur, port_pts))
-
-    order_m = np.argsort(port_pts[:, 0] + port_pts[:, 1] * 0.7 + NP_RNG.normal(0, 8, len(port_pts)))
-    morph_groups: list[list[int]] = [[] for _ in range(N_MORPH_GROUPS)]
-    for i, idx in enumerate(order_m):
-        morph_groups[i % N_MORPH_GROUPS].append(int(idx))
+    # stages: 0=port, 1=btc, 2=eth, 3=nft, 4=port
 
     pt = portrait_transform()
     parts: list[str] = []
 
-    svg_head = [
+    head = "\n".join([
         '<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="610" viewBox="0 0 1180 610" '
         'font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,\'Liberation Mono\',monospace" '
         'role="img" aria-label="Rohit Yadav — profile.sh --live">',
         '<defs>',
-        f'<linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">',
+        '<linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">',
         f'  <stop offset="0" stop-color="{theme["violet2"]}"><animate attributeName="stop-color" values="{theme["violet2"]};{theme["chrome"]};{theme["accent"]};{theme["violet2"]}" dur="10s" repeatCount="indefinite"/></stop>',
         f'  <stop offset="0.5" stop-color="{theme["chrome"]}"><animate attributeName="stop-color" values="{theme["chrome"]};{theme["accent"]};{theme["violet2"]};{theme["chrome"]}" dur="10s" repeatCount="indefinite"/></stop>',
         f'  <stop offset="1" stop-color="{theme["accent"]}"><animate attributeName="stop-color" values="{theme["accent"]};{theme["violet2"]};{theme["chrome"]};{theme["accent"]}" dur="10s" repeatCount="indefinite"/></stop>',
@@ -680,6 +696,7 @@ def build_svg(theme_name: str, dots: np.ndarray) -> str:
         '<filter id="txtGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="0.9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>',
         '<clipPath id="winClip"><rect x="2" y="2" width="1176" height="606" rx="18"/></clipPath>',
         f'<clipPath id="mapClip"><rect x="{FRAME_X}" y="{FRAME_Y}" width="{PANEL_W}" height="{PANEL_H}" rx="10"/></clipPath>',
+        f'<rect id="tvdot" width="2.4" height="1.7" fill="{theme["portrait"]}"/>',
         '</defs>',
         f'<rect x="2" y="2" width="1176" height="606" rx="18" fill="{theme["bg"]}"/>',
         '<g clip-path="url(#winClip)">',
@@ -693,10 +710,11 @@ def build_svg(theme_name: str, dots: np.ndarray) -> str:
         f'<text x="38" y="74" font-size="10" letter-spacing="3" fill="{theme["dim"]}">VISUAL.MAP</text>',
         f'<rect x="{FRAME_X}" y="{FRAME_Y}" width="{PANEL_W}" height="{PANEL_H}" rx="10" fill="none" stroke="{theme["chrome"]}" stroke-width="2" opacity="0.45" filter="url(#glow3)"/>',
         f'<rect x="{FRAME_X}" y="{FRAME_Y}" width="{PANEL_W}" height="{PANEL_H}" rx="10" fill="{theme["panel"]}" stroke="{theme["frame_stroke"]}"/>',
-    ]
-    parts.append("\n".join(svg_head) + "\n")
+    ])
+    parts.append(head + "\n")
     parts.append('<g clip-path="url(#mapClip)">\n')
 
+    # ----- Intro assemble -----
     parts.append(
         f'<g transform="{pt}" fill="{theme["portrait"]}" shape-rendering="crispEdges">\n'
         f'<set attributeName="opacity" to="0" begin="{INTRO_END}s"/>\n'
@@ -711,17 +729,21 @@ def build_svg(theme_name: str, dots: np.ndarray) -> str:
             if 0 <= xi < GRID_W and 0 <= yi < GRID_H:
                 gdots[yi, xi] = True
         d = "".join(pack_runs(gdots))
-        if not d:
-            continue
-        parts.append(
-            f'<g opacity="0"><animate attributeName="opacity" values="0;1" dur="0.9s" begin="{begin:.2f}s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".4 0 .2 1"/><path d="{d}"/></g>\n'
-        )
+        if d:
+            parts.append(
+                f'<g opacity="0"><animate attributeName="opacity" values="0;1" dur="0.9s" begin="{begin:.2f}s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines=".4 0 .2 1"/><path d="{d}"/></g>\n'
+            )
     parts.append("</g>\n")
 
-    kt = "0;0.183;0.275;0.394;0.486;0.606;0.697;0.817;0.908;1"
-    port_op = "1;1;0;0;0;0;0;0;0;1"
-    splines9 = ";".join([".4 0 .2 1"] * 9)
+    # arifhaxn keyTimes (3 logos): portrait hold → L1 → L2 → L3 → portrait
+    # 0.000;0.194;0.288;0.432;0.525;0.669;0.763;0.906;1.000
+    kt = "0.000;0.194;0.288;0.432;0.525;0.669;0.763;0.906;1.000"
+    # Portrait visible only at ends; gone while travellers form logos
+    port_op = "1;1;0;0;0;0;0;0;1"
+    # Travellers hidden during portrait, visible for all logo phases
+    tv_op = "0;0;1;1;1;1;1;1;0"
 
+    # ----- Dense portrait dissolve (drift toward first logo, then gone) -----
     parts.append(
         f'<g transform="{pt}" fill="{theme["portrait"]}" shape-rendering="crispEdges" opacity="0">\n'
         f'<set attributeName="opacity" to="1" begin="{INTRO_END}s"/>\n'
@@ -730,10 +752,10 @@ def build_svg(theme_name: str, dots: np.ndarray) -> str:
         if not band:
             continue
         arr = np.array(band)
-        dx = (first_centroid[0] - arr[:, 0].mean()) * 0.55
-        dy = (first_centroid[1] - arr[:, 1].mean()) * 0.55
-        dx += (bi % 7 - 3) * 3.0
-        dy += (bi % 5 - 2) * 3.0
+        dx = (first_centroid[0] - arr[:, 0].mean()) * 0.42
+        dy = (first_centroid[1] - arr[:, 1].mean()) * 0.42
+        dx += (bi % 7 - 3) * 2.5
+        dy += (bi % 5 - 2) * 2.5
         gdots = np.zeros((GRID_H, GRID_W), dtype=bool)
         for x, y in band:
             xi, yi = int(x), int(y)
@@ -742,78 +764,46 @@ def build_svg(theme_name: str, dots: np.ndarray) -> str:
         d = "".join(pack_runs(gdots))
         if not d:
             continue
+        # hold; hold; drift out; stay out ...; return
         tv = (
-            f"0 0;0 0;{dx:.1f} {dy:.1f};{dx*1.25:.1f} {dy*1.25:.1f};"
-            f"{dx*1.25:.1f} {dy*1.25:.1f};{dx*1.25:.1f} {dy*1.25:.1f};"
-            f"{dx*1.25:.1f} {dy*1.25:.1f};{dx*1.25:.1f} {dy*1.25:.1f};0 0;0 0"
+            f"0 0;0 0;{dx:.1f} {dy:.1f};{dx:.1f} {dy:.1f};"
+            f"{dx:.1f} {dy:.1f};{dx:.1f} {dy:.1f};{dx:.1f} {dy:.1f};{dx:.1f} {dy:.1f};0 0"
         )
         parts.append(
             f'<g>\n'
-            f'  <animate attributeName="opacity" values="{port_op}" keyTimes="{kt}" dur="{LOOP_DUR}s" begin="{INTRO_END}s" repeatCount="indefinite" calcMode="linear"/>\n'
-            f'  <animateTransform attributeName="transform" type="translate" values="{tv}" keyTimes="{kt}" dur="{LOOP_DUR}s" begin="{INTRO_END}s" repeatCount="indefinite" calcMode="spline" keySplines="{splines9}"/>\n'
+            f'  <animate attributeName="opacity" values="{port_op}" keyTimes="{kt}" dur="{LOOP_DUR}s" begin="{INTRO_END}s" repeatCount="indefinite"/>\n'
+            f'  <animateTransform attributeName="transform" type="translate" values="{tv}" keyTimes="{kt}" dur="{LOOP_DUR}s" begin="{INTRO_END}s" repeatCount="indefinite"/>\n'
             f'  <path d="{d}"/>\n'
             f'</g>\n'
         )
     parts.append("</g>\n")
 
-    logo_hold_op = [
-        "0;0;0.25;1;0.25;0;0;0;0;0",
-        "0;0;0;0;0.25;1;0.25;0;0;0",
-        "0;0;0;0;0;0;0.25;1;0.25;0",
-    ]
-    parts.append(f'<g transform="{pt}" fill="{theme["chrome"]}" shape-rendering="crispEdges">\n')
-    for li, lg in enumerate(logos):
-        d = path_from_points(lg, size=1)
-        if not d:
-            continue
+    # ----- Travellers: each particle flies port→btc→eth→nft→port -----
+    # Fill uses chrome during logo phases for contrast against dark panel
+    parts.append(f'<g transform="{pt}">\n')
+    parts.append(f'<defs><rect id="tvdot2" width="2.4" height="1.7" fill="{theme["chrome"]}"/></defs>\n')
+    for i in range(N_TRAVELLERS):
+        # positions at each keyframe (hold each logo for two keys)
+        p0 = stages[0][i]
+        p1 = stages[1][i]
+        p2 = stages[2][i]
+        p3 = stages[3][i]
+        p4 = stages[4][i]
+        vals = (
+            f"{p0[0]:.0f} {p0[1]:.0f};{p0[0]:.0f} {p0[1]:.0f};"
+            f"{p1[0]:.0f} {p1[1]:.0f};{p1[0]:.0f} {p1[1]:.0f};"
+            f"{p2[0]:.0f} {p2[1]:.0f};{p2[0]:.0f} {p2[1]:.0f};"
+            f"{p3[0]:.0f} {p3[1]:.0f};{p3[0]:.0f} {p3[1]:.0f};"
+            f"{p4[0]:.0f} {p4[1]:.0f}"
+        )
         parts.append(
-            f'<g opacity="0">\n'
-            f'  <animate attributeName="opacity" values="{logo_hold_op[li]}" keyTimes="{kt}" dur="{LOOP_DUR}s" begin="{INTRO_END}s" repeatCount="indefinite"/>\n'
-            f'  <path d="{d}"/>\n'
-            f'</g>\n'
+            f'<use href="#tvdot2" opacity="0">'
+            f'<animate attributeName="opacity" values="{tv_op}" keyTimes="{kt}" dur="{LOOP_DUR}s" begin="{INTRO_END}s" repeatCount="indefinite"/>'
+            f'<animateTransform attributeName="transform" type="translate" values="{vals}" keyTimes="{kt}" dur="{LOOP_DUR}s" begin="{INTRO_END}s" repeatCount="indefinite"/>'
+            f'</use>\n'
         )
     parts.append("</g>\n")
-
-    swarm_op = "0;0;1;1;1;1;1;1;0.35;0"
-    morph_splines = ";".join([".42 0 .58 1", ".35 0 .25 1"] * 4 + [".42 0 .58 1"])
-    parts.append(f'<g transform="{pt}" fill="{theme["chrome"]}" shape-rendering="crispEdges">\n')
-    for gi, members in enumerate(morph_groups):
-        if len(members) < 2:
-            continue
-        base = stages[0][members].mean(axis=0)
-        rel = stages[0][members] - base
-        gdots = np.zeros((28, 28), dtype=bool)
-        for x, y in rel:
-            xi, yi = int(round(x + 14)), int(round(y + 14))
-            if 0 <= xi < 27 and 0 <= yi < 27:
-                gdots[yi:yi + 2, xi:xi + 2] = True
-        local_path = "".join(pack_runs(gdots)) or "M13 13h2v2h-2z"
-
-        cents = [st[members].mean(axis=0) for st in stages]
-        seq = [cents[0], cents[0], cents[1], cents[1], cents[2], cents[2], cents[3], cents[3], cents[4], cents[4]]
-        scatter = (gi % 11 - 5) * 3.2
-        scatter_y = ((gi * 5) % 9 - 4) * 2.6
-        tv_parts = []
-        for ki, c in enumerate(seq):
-            x, y = float(c[0] - 14), float(c[1] - 14)
-            if ki == 1:
-                x += scatter * 0.55
-                y += scatter_y * 0.55
-            elif ki in (2, 4, 6, 8):
-                x += scatter * 0.15
-                y += scatter_y * 0.15
-            tv_parts.append(f"{x:.1f} {y:.1f}")
-        tv = ";".join(tv_parts)
-        delay = (gi % 14) * 0.025
-        x0, y0 = float(seq[0][0] - 14), float(seq[0][1] - 14)
-        parts.append(
-            f'<g opacity="0" transform="translate({x0:.1f} {y0:.1f})">\n'
-            f'  <animate attributeName="opacity" values="{swarm_op}" keyTimes="{kt}" dur="{LOOP_DUR}s" begin="{INTRO_END + delay:.2f}s" repeatCount="indefinite"/>\n'
-            f'  <animateTransform attributeName="transform" type="translate" values="{tv}" keyTimes="{kt}" dur="{LOOP_DUR}s" begin="{INTRO_END + delay:.2f}s" repeatCount="indefinite" calcMode="spline" keySplines="{morph_splines}"/>\n'
-            f'  <path d="{local_path}"/>\n'
-            f'</g>\n'
-        )
-    parts.append("</g>\n</g>\n")
+    parts.append("</g>\n")  # mapClip
 
     c = theme["chrome"]
     parts.append(
@@ -829,6 +819,7 @@ def build_svg(theme_name: str, dots: np.ndarray) -> str:
     )
     parts.append("</g>\n</svg>\n")
     return "".join(parts)
+
 
 
 def main():
