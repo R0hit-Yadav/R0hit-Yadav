@@ -41,7 +41,7 @@ LOOP_DUR = 13.9
 
 N_INTRO_GROUPS = 60
 N_DRIFT_BANDS = 94
-N_TRAVELLERS = 1200  # arifhaxn-style individual flying particles
+N_TRAVELLERS = 800  # transition-only swarm (dense logos carry the hold clarity)
 
 RNG = random.Random(42)
 NP_RNG = np.random.default_rng(42)
@@ -364,8 +364,8 @@ def dots_to_coords(dots: np.ndarray) -> np.ndarray:
 
 def dither_logo_image(path: Path, canvas_w: int = GRID_W, canvas_h: int = GRID_H) -> np.ndarray:
     """
-    Convert a logo into a centered dithered point cloud on the portrait grid.
-    Fits with margin so tall logos (ETH diamond) are never clipped.
+    Convert a logo into a clear, centered dithered point cloud.
+    ETH is shifted upward so the full diamond sits in-frame (not half-cut).
     """
     from scipy import ndimage
 
@@ -380,12 +380,10 @@ def dither_logo_image(path: Path, canvas_w: int = GRID_W, canvas_h: int = GRID_H
     arr = np.asarray(im).astype(np.float32)
     lum = 0.299 * arr[:, :, 0] + 0.587 * arr[:, :, 1] + 0.114 * arr[:, :, 2]
     r, g, b = arr[:, :, 0], arr[:, :, 1], arr[:, :, 2]
-    # Keep bright ink + vivid orange (Bitcoin) + teal accents
     orange = (r > 140) & (g > 60) & (g < 180) & (b < 100)
-    teal = (b > 80) & (g > 60) & (b + g > r + 40)
-    content = (lum > 22) | orange | teal
+    content = (lum > 18) | orange
 
-    content = ndimage.binary_closing(content, iterations=2)
+    content = ndimage.binary_closing(content, iterations=3)
     content = ndimage.binary_fill_holes(content)
     labeled, n = ndimage.label(content)
     if n:
@@ -396,15 +394,16 @@ def dither_logo_image(path: Path, canvas_w: int = GRID_W, canvas_h: int = GRID_H
     if len(xs) < 50:
         x0, x1, y0, y1 = 0, arr.shape[1], 0, arr.shape[0]
     else:
-        pad = 12
+        pad = 16
         x0 = max(0, int(xs.min()) - pad)
         x1 = min(arr.shape[1], int(xs.max()) + pad + 1)
         y0 = max(0, int(ys.min()) - pad)
         y1 = min(arr.shape[0], int(ys.max()) + pad + 1)
 
     crop = im.crop((x0, y0, x1, y1))
-    # Keep logos smaller so ETH diamond / Bitcoin circle never clip the frame
-    fit = 0.58 if "eth" in path.name.lower() else 0.64
+    is_eth = "eth" in path.name.lower()
+    # ETH slightly smaller + shifted up so bottom shards aren't clipped
+    fit = 0.62 if is_eth else 0.68
     max_w, max_h = int(canvas_w * fit), int(canvas_h * fit)
     tw, th = crop.size
     scale = min(max_w / tw, max_h / th)
@@ -412,33 +411,31 @@ def dither_logo_image(path: Path, canvas_w: int = GRID_W, canvas_h: int = GRID_H
     crop = crop.resize((nw, nh), Image.Resampling.LANCZOS)
 
     g = ImageOps.grayscale(crop)
-    g = ImageOps.autocontrast(g, cutoff=2)
-    g = ImageEnhance.Contrast(g).enhance(1.75)
-    g = g.filter(ImageFilter.UnsharpMask(radius=2, percent=150, threshold=2))
+    g = ImageOps.autocontrast(g, cutoff=1)
+    g = ImageEnhance.Contrast(g).enhance(1.85)
+    g = g.filter(ImageFilter.UnsharpMask(radius=2, percent=160, threshold=1))
     gray = np.asarray(g).astype(np.float32)
 
-    from scipy import ndimage as ndi
-
-    if "eth" in path.name.lower():
-        # Keep full diamond including darker lower facets (no edge wipe)
-        target = np.clip((255.0 - gray) * 1.15, 0, 255)
-        # Lift shadowed metal so bottom shards stay visible
-        metal = (gray > 12) & (gray < 140)
-        target = np.where(metal, np.maximum(target, 160), target)
-        # Hard-clear pure black bg
-        target = np.where(gray < 10, 255, target)
+    # Bright / metal → ink; pure black → empty (clear logos on dark panel)
+    if is_eth:
+        target = np.clip((255.0 - gray) * 1.2, 0, 255)
+        # Force all non-black metal into ink so full diamond (incl. bottom) reads solid
+        target = np.where(gray > 14, np.minimum(target, 90), 255)
     else:
-        target = np.clip((255.0 - gray) * 1.25, 0, 255)
-        edges = ndi.gaussian_gradient_magnitude(gray, sigma=1.2)
-        edges = edges / (edges.max() + 1e-6)
-        target = np.clip(target * (0.55 + 0.85 * edges), 0, 255)
-        target = np.where(gray < 10, 255, target)
+        target = np.clip((255.0 - gray) * 1.3, 0, 255)
+        target = np.where(gray > 14, np.minimum(target, 100), 255)
 
     dots = floyd_steinberg(target)
 
     canvas = np.zeros((canvas_h, canvas_w), dtype=bool)
     ox = (canvas_w - nw) // 2
-    oy = (canvas_h - nh) // 2
+    if is_eth:
+        # Bias upward (~30px) so logo sits higher in VISUAL.MAP
+        oy = max(10, (canvas_h - nh) // 2 - 32)
+    else:
+        oy = (canvas_h - nh) // 2
+    # Keep fully inside canvas
+    oy = min(oy, canvas_h - nh)
     canvas[oy : oy + nh, ox : ox + nw] = dots
     return dots_to_coords(canvas)
 
@@ -735,13 +732,19 @@ def build_svg(theme_name: str, dots: np.ndarray) -> str:
             )
     parts.append("</g>\n")
 
-    # arifhaxn keyTimes (3 logos): portrait hold → L1 → L2 → L3 → portrait
-    # 0.000;0.194;0.288;0.432;0.525;0.669;0.763;0.906;1.000
+    # arifhaxn keyTimes (3 logos): portrait → L1 → L2 → L3 → portrait
     kt = "0.000;0.194;0.288;0.432;0.525;0.669;0.763;0.906;1.000"
-    # Portrait visible only at ends; gone while travellers form logos
+    # Portrait visible only at ends
     port_op = "1;1;0;0;0;0;0;0;1"
-    # Travellers hidden during portrait, visible for all logo phases
-    tv_op = "0;0;1;1;1;1;1;1;0"
+    # Travellers ONLY during transitions (discrete) — no mid-hold clutter dots
+    # keys: port | leave | btcHold | toEth | ethHold | toNft | nftHold | toPort | port
+    tv_op = "0;1;0;1;0;1;0;1;0"
+    # Dense full logos ONLY on settled holds (exact clear image)
+    logo_hold = [
+        "0;0;1;0;0;0;0;0;0",  # BTC @ 0.288–0.432
+        "0;0;0;0;1;0;0;0;0",  # ETH @ 0.525–0.669
+        "0;0;0;0;0;0;1;0;0",  # NFT @ 0.763–0.906
+    ]
 
     # ----- Dense portrait dissolve (drift toward first logo, then gone) -----
     parts.append(
@@ -764,7 +767,6 @@ def build_svg(theme_name: str, dots: np.ndarray) -> str:
         d = "".join(pack_runs(gdots))
         if not d:
             continue
-        # hold; hold; drift out; stay out ...; return
         tv = (
             f"0 0;0 0;{dx:.1f} {dy:.1f};{dx:.1f} {dy:.1f};"
             f"{dx:.1f} {dy:.1f};{dx:.1f} {dy:.1f};{dx:.1f} {dy:.1f};{dx:.1f} {dy:.1f};0 0"
@@ -778,12 +780,27 @@ def build_svg(theme_name: str, dots: np.ndarray) -> str:
         )
     parts.append("</g>\n")
 
-    # ----- Travellers: each particle flies port→btc→eth→nft→port -----
-    # Fill uses chrome during logo phases for contrast against dark panel
+    # ----- Dense logos (exact settled frames) -----
+    parts.append(
+        f'<g transform="{pt}" fill="{theme["chrome"]}" shape-rendering="crispEdges">\n'
+    )
+    for li, lg in enumerate(logos):
+        d = path_from_points(lg, size=1)
+        if not d:
+            continue
+        parts.append(
+            f'<g opacity="0">\n'
+            f'  <animate attributeName="opacity" values="{logo_hold[li]}" keyTimes="{kt}" '
+            f'dur="{LOOP_DUR}s" begin="{INTRO_END}s" repeatCount="indefinite" calcMode="discrete"/>\n'
+            f'  <path d="{d}"/>\n'
+            f'</g>\n'
+        )
+    parts.append("</g>\n")
+
+    # ----- Travellers: fly only during transitions -----
     parts.append(f'<g transform="{pt}">\n')
     parts.append(f'<defs><rect id="tvdot2" width="2.4" height="1.7" fill="{theme["chrome"]}"/></defs>\n')
     for i in range(N_TRAVELLERS):
-        # positions at each keyframe (hold each logo for two keys)
         p0 = stages[0][i]
         p1 = stages[1][i]
         p2 = stages[2][i]
@@ -798,8 +815,10 @@ def build_svg(theme_name: str, dots: np.ndarray) -> str:
         )
         parts.append(
             f'<use href="#tvdot2" opacity="0">'
-            f'<animate attributeName="opacity" values="{tv_op}" keyTimes="{kt}" dur="{LOOP_DUR}s" begin="{INTRO_END}s" repeatCount="indefinite"/>'
-            f'<animateTransform attributeName="transform" type="translate" values="{vals}" keyTimes="{kt}" dur="{LOOP_DUR}s" begin="{INTRO_END}s" repeatCount="indefinite"/>'
+            f'<animate attributeName="opacity" values="{tv_op}" keyTimes="{kt}" '
+            f'dur="{LOOP_DUR}s" begin="{INTRO_END}s" repeatCount="indefinite" calcMode="discrete"/>'
+            f'<animateTransform attributeName="transform" type="translate" values="{vals}" '
+            f'keyTimes="{kt}" dur="{LOOP_DUR}s" begin="{INTRO_END}s" repeatCount="indefinite"/>'
             f'</use>\n'
         )
     parts.append("</g>\n")
