@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="70" viewBox="0 0 1180 70" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace" role="img" aria-label="Thanks for visiting">
+<defs><linearGradient id="l" x1="0" x2="1"><stop offset="0" stop-color="#A78BFA" stop-opacity="0"/><stop offset=".5" stop-color="#22D3EE"/><stop offset="1" stop-color="#10B981" stop-opacity="0"/>
+<animate attributeName="x1" values="-1;1" dur="5s" repeatCount="indefinite"/><animate attributeName="x2" values="0;2" dur="5s" repeatCount="indefinite"/></linearGradient></defs>
+<line x1="0" y1="12" x2="1180" y2="12" stroke="url(#l)" stroke-width="1.5"/>
+<text x="590.0" y="46" text-anchor="middle" font-size="14" fill="#94A3B8"><tspan fill="#10B981">&#10003;</tspan> tx confirmed <tspan fill="#475569">·</tspan> thanks for stopping by <tspan fill="#475569">·</tspan> <tspan fill="#22D3EE">gm</tspan> <tspan fill="#22D3EE">&#9608;<animate attributeName="fill-opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></tspan></text>
+</svg>
