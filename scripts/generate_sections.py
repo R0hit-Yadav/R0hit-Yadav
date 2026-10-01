@@ -2,9 +2,9 @@
 """
 Generate the README section SVGs (dark + light), matching the banner palette:
 
-  assets/chains-{dark,light}.svg  — LEDGER.TRACE: the chains I build on, drawn
-                                    as linked blocks with a packet confirming
-                                    each block in turn.
+  assets/chains-header-*.svg + assets/chains/<i>-<theme>.svg
+                                  — LEDGER.TRACE: the chains I build on, one
+                                    image per block so each links to its repo.
   assets/footer-{dark,light}.svg  — closing terminal line.
 
 Run: python3 scripts/generate_sections.py   (stdlib only)
@@ -43,57 +43,58 @@ def h(s: str) -> str:
     return f"0x{d[:4]}…{d[-4:]}"
 
 
-def chains_svg(name: str) -> str:
+STEP = 1.1                        # s per block confirmation
+CYCLE = STEP * len(BLOCKS) + 1.4
+GAP, BW, BH, PAD = 22, 174, 170, 8  # each tile = block + its outgoing link
+TW, TH = BW + GAP, BH + 2 * PAD
+
+
+def chains_header(name: str) -> str:
     t = THEMES[name]
-    W, H = 1180, 232
-    n = len(BLOCKS)
-    gap = 22
-    bw = (W - 10 - gap * (n - 1)) / n
-    by, bh = 44, 170
-    step = 1.1                     # s per block confirmation
-    cycle = step * n + 1.4
-    o = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" font-family="{FONT}" role="img" aria-label="Chains I build on">',
+    W, H = 1180, 34
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" font-family="{FONT}" role="img" aria-label="Chains I build on">'
+            f'<text x="6" y="22" font-size="11" letter-spacing="3" fill="{t["chrome"]}">LEDGER.TRACE</text>'
+            f'<text x="128" y="22" font-size="11" fill="{t["dim"]}">./chains.sh --verify · click a block to open its repo</text>'
+            f'<line x1="500" y1="18" x2="{W - 150}" y2="18" stroke="{t["hair"]}"/>'
+            f'<text x="{W - 6}" y="22" text-anchor="end" font-size="11" fill="{t["accent"]}">&#9679; {len(BLOCKS)} blocks synced'
+            f'<animate attributeName="opacity" values="1;.35;1" dur="2s" repeatCount="indefinite"/></text></svg>\n')
+
+
+def chain_tile(name: str, i: int) -> str:
+    """One block as its own image so the README can wrap each in a repo link."""
+    t = THEMES[name]
+    chain, stack, repo, cd, cl = BLOCKS[i]
+    c = cd if name == "dark" else cl
+    prev = h(BLOCKS[i - 1][0] + BLOCKS[i - 1][2]) if i else "0x0000…0000"
+    x, by, bw, bh = 2, PAD, BW, BH
+    on = i * STEP / CYCLE
+    kt = f"0;{on:.3f};{min(on + 0.06, 1):.3f};{min(on + STEP / CYCLE, 1):.3f};1"
+    anim = f'keyTimes="{kt}" dur="{CYCLE:.2f}s" repeatCount="indefinite"'
+    o = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{TW}" height="{TH}" viewBox="0 0 {TW} {TH}" font-family="{FONT}" role="img" aria-label="{chain} — {repo}">',
          '<defs><filter id="g" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter></defs>']
-    o.append(f'<text x="6" y="24" font-size="11" letter-spacing="3" fill="{t["chrome"]}">LEDGER.TRACE</text>'
-             f'<text x="128" y="24" font-size="11" fill="{t["dim"]}">./chains.sh --verify</text>'
-             f'<line x1="300" y1="20" x2="{W - 150}" y2="20" stroke="{t["hair"]}"/>'
-             f'<text x="{W - 6}" y="24" text-anchor="end" font-size="11" fill="{t["accent"]}">&#9679; {n} blocks synced'
-             f'<animate attributeName="opacity" values="1;.35;1" dur="2s" repeatCount="indefinite"/></text>')
-    prev = "0x0000…0000"
-    for i, (chain, stack, repo, cd, cl) in enumerate(BLOCKS):
-        c = cd if name == "dark" else cl
-        x = 5 + i * (bw + gap)
-        on = i * step / cycle
-        kt = f"0;{on:.3f};{min(on + 0.06, 1):.3f};{min(on + step / cycle, 1):.3f};1"
-        # link to next block with travelling packet
-        if i < n - 1:
-            lx1, lx2, ly = x + bw, x + bw + gap, by + bh / 2
-            o.append(f'<line x1="{lx1:.1f}" y1="{ly}" x2="{lx2:.1f}" y2="{ly}" stroke="{t["chrome"]}" stroke-width="1.5" stroke-dasharray="3 3" opacity=".6">'
-                     f'<animate attributeName="stroke-dashoffset" values="6;0" dur="0.6s" repeatCount="indefinite"/></line>')
-            pb = (i + 0.75) * step
-            o.append(f'<circle r="3" cy="{ly}" fill="{t["chrome"]}" opacity="0">'
-                     f'<animate attributeName="cx" values="{lx1:.1f};{lx2:.1f}" dur="{step * 0.35:.2f}s" begin="{pb:.2f}s;{pb:.2f}s+{cycle:.2f}s" fill="freeze"/>'
-                     f'<animate attributeName="opacity" values="0;1;1;0" dur="{step * 0.35:.2f}s" begin="{pb:.2f}s;{pb:.2f}s+{cycle:.2f}s"/></circle>')
-        # card
-        o.append(f'<g>')
-        o.append(f'<rect x="{x:.1f}" y="{by}" width="{bw:.1f}" height="{bh}" rx="10" fill="{c}" opacity="0" filter="url(#g)">'
-                 f'<animate attributeName="opacity" values="0;0;.35;0;0" keyTimes="{kt}" dur="{cycle:.2f}s" repeatCount="indefinite"/></rect>')
-        o.append(f'<rect x="{x:.1f}" y="{by}" width="{bw:.1f}" height="{bh}" rx="10" fill="{t["card"]}" stroke="{t["stroke"]}"/>')
-        o.append(f'<rect x="{x:.1f}" y="{by}" width="{bw:.1f}" height="{bh}" rx="10" fill="none" stroke="{c}" stroke-width="1.4" opacity="0">'
-                 f'<animate attributeName="opacity" values="0;0;1;.25;.25" keyTimes="{kt}" dur="{cycle:.2f}s" repeatCount="indefinite"/></rect>')
-        o.append(f'<path d="M{x:.1f} {by + 26}h{bw:.1f}" stroke="{t["hair"]}"/>')
-        o.append(f'<text x="{x + 12:.1f}" y="{by + 17}" font-size="10" letter-spacing="1.5" fill="{t["dim"]}">BLOCK #{i:02d}</text>')
-        o.append(f'<circle cx="{x + bw - 14:.1f}" cy="{by + 13}" r="3.5" fill="{t["dim"]}"><animate attributeName="fill" values="{t["dim"]};{t["dim"]};{t["accent"]};{t["accent"]};{t["accent"]}" keyTimes="{kt}" dur="{cycle:.2f}s" repeatCount="indefinite"/></circle>')
-        o.append(f'<text x="{x + 12:.1f}" y="{by + 56}" font-size="17" font-weight="700" fill="{c}">{chain}</text>')
-        o.append(f'<text x="{x + 12:.1f}" y="{by + 78}" font-size="11" fill="{t["muted"]}">{stack}</text>')
-        o.append(f'<text x="{x + 12:.1f}" y="{by + 104}" font-size="10" fill="{t["dim"]}">repo</text>'
-                 f'<text x="{x + 12:.1f}" y="{by + 118}" font-size="10.5" fill="{t["text"]}" textLength="{min(len(repo) * 6.3, bw - 24):.0f}" lengthAdjust="spacingAndGlyphs">{repo}</text>')
-        cur = h(chain + repo)
-        o.append(f'<text x="{x + 12:.1f}" y="{by + 142}" font-size="9.5" fill="{t["dim"]}">prev <tspan fill="{t["muted"]}">{prev}</tspan></text>'
-                 f'<text x="{x + 12:.1f}" y="{by + 157}" font-size="9.5" fill="{t["dim"]}">hash <tspan fill="{c}">{cur}</tspan></text>')
-        prev = cur
-        o.append('</g>')
-    o.append('</svg>')
+    if i < len(BLOCKS) - 1:   # link to the next block with a travelling packet
+        lx1, lx2, ly = x + bw, TW, by + bh / 2
+        pb = (i + 0.75) * STEP
+        o.append(f'<line x1="{lx1}" y1="{ly}" x2="{lx2}" y2="{ly}" stroke="{t["chrome"]}" stroke-width="1.5" stroke-dasharray="3 3" opacity=".6">'
+                 f'<animate attributeName="stroke-dashoffset" values="6;0" dur="0.6s" repeatCount="indefinite"/></line>')
+        o.append(f'<circle r="3" cx="{lx1}" cy="{ly}" fill="{t["chrome"]}" opacity="0">'
+                 f'<animate attributeName="cx" values="{lx1};{lx2}" dur="{STEP * 0.35:.2f}s" begin="{pb:.2f}s;{pb:.2f}s+{CYCLE:.2f}s" fill="freeze"/>'
+                 f'<animate attributeName="opacity" values="0;1;1;0" dur="{STEP * 0.35:.2f}s" begin="{pb:.2f}s;{pb:.2f}s+{CYCLE:.2f}s"/></circle>')
+    o.append(f'<rect x="{x}" y="{by}" width="{bw}" height="{bh}" rx="10" fill="{c}" opacity="0" filter="url(#g)">'
+             f'<animate attributeName="opacity" values="0;0;.35;0;0" {anim}/></rect>')
+    o.append(f'<rect x="{x}" y="{by}" width="{bw}" height="{bh}" rx="10" fill="{t["card"]}" stroke="{t["stroke"]}"/>')
+    o.append(f'<rect x="{x}" y="{by}" width="{bw}" height="{bh}" rx="10" fill="none" stroke="{c}" stroke-width="1.4" opacity="0">'
+             f'<animate attributeName="opacity" values="0;0;1;.25;.25" {anim}/></rect>')
+    o.append(f'<path d="M{x} {by + 26}h{bw}" stroke="{t["hair"]}"/>')
+    o.append(f'<text x="{x + 12}" y="{by + 17}" font-size="10" letter-spacing="1.5" fill="{t["dim"]}">BLOCK #{i:02d}</text>')
+    o.append(f'<circle cx="{x + bw - 14}" cy="{by + 13}" r="3.5" fill="{t["dim"]}"><animate attributeName="fill" values="{t["dim"]};{t["dim"]};{t["accent"]};{t["accent"]};{t["accent"]}" {anim}/></circle>')
+    o.append(f'<text x="{x + 12}" y="{by + 56}" font-size="17" font-weight="700" fill="{c}">{chain}</text>')
+    o.append(f'<text x="{x + 12}" y="{by + 78}" font-size="11" fill="{t["muted"]}">{stack}</text>')
+    o.append(f'<text x="{x + 12}" y="{by + 104}" font-size="10" fill="{t["dim"]}">repo <tspan fill="{t["chrome"]}">&#8599;</tspan></text>'
+             f'<text x="{x + 12}" y="{by + 118}" font-size="10.5" fill="{t["text"]}" textLength="{min(len(repo) * 6.3, bw - 24):.0f}" lengthAdjust="spacingAndGlyphs">{repo}</text>')
+    o.append(f'<text x="{x + 12}" y="{by + 142}" font-size="9.5" fill="{t["dim"]}">prev <tspan fill="{t["muted"]}">{prev}</tspan></text>'
+             f'<text x="{x + 12}" y="{by + 157}" font-size="9.5" fill="{t["dim"]}">hash <tspan fill="{c}">{h(chain + repo)}</tspan></text>')
+    o.append('</svg>\n')
     return "\n".join(o)
 
 
@@ -110,11 +111,13 @@ def footer_svg(name: str) -> str:
 
 
 def main() -> None:
-    OUT.mkdir(exist_ok=True)
+    (OUT / "chains").mkdir(parents=True, exist_ok=True)
     for name in THEMES:
-        (OUT / f"chains-{name}.svg").write_text(chains_svg(name), encoding="utf-8")
+        (OUT / f"chains-header-{name}.svg").write_text(chains_header(name), encoding="utf-8")
+        for i in range(len(BLOCKS)):
+            (OUT / "chains" / f"{i}-{name}.svg").write_text(chain_tile(name, i), encoding="utf-8")
         (OUT / f"footer-{name}.svg").write_text(footer_svg(name), encoding="utf-8")
-    print("wrote chains-*.svg, footer-*.svg")
+    print("wrote chains-header-*.svg, chains/*.svg, footer-*.svg")
 
 
 if __name__ == "__main__":

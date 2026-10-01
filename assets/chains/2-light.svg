@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="196" height="186" viewBox="0 0 196 186" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace" role="img" aria-label="Aptos — Move_Aptos">
+<defs><filter id="g" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter></defs>
+<line x1="176" y1="93.0" x2="196" y2="93.0" stroke="#0891B2" stroke-width="1.5" stroke-dasharray="3 3" opacity=".6"><animate attributeName="stroke-dashoffset" values="6;0" dur="0.6s" repeatCount="indefinite"/></line>
+<circle r="3" cx="176" cy="93.0" fill="#0891B2" opacity="0"><animate attributeName="cx" values="176;196" dur="0.39s" begin="3.03s;3.03s+8.00s" fill="freeze"/><animate attributeName="opacity" values="0;1;1;0" dur="0.39s" begin="3.03s;3.03s+8.00s"/></circle>
+<rect x="2" y="8" width="174" height="170" rx="10" fill="#0D9488" opacity="0" filter="url(#g)"><animate attributeName="opacity" values="0;0;.35;0;0" keyTimes="0;0.275;0.335;0.413;1" dur="8.00s" repeatCount="indefinite"/></rect>
+<rect x="2" y="8" width="174" height="170" rx="10" fill="#F8FAFC" stroke="rgba(8,145,178,0.30)"/>
+<rect x="2" y="8" width="174" height="170" rx="10" fill="none" stroke="#0D9488" stroke-width="1.4" opacity="0"><animate attributeName="opacity" values="0;0;1;.25;.25" keyTimes="0;0.275;0.335;0.413;1" dur="8.00s" repeatCount="indefinite"/></rect>
+<path d="M2 34h174" stroke="rgba(0,0,0,0.08)"/>
+<text x="14" y="25" font-size="10" letter-spacing="1.5" fill="#94A3B8">BLOCK #02</text>
+<circle cx="162" cy="21" r="3.5" fill="#94A3B8"><animate attributeName="fill" values="#94A3B8;#94A3B8;#059669;#059669;#059669" keyTimes="0;0.275;0.335;0.413;1" dur="8.00s" repeatCount="indefinite"/></circle>
+<text x="14" y="64" font-size="17" font-weight="700" fill="#0D9488">Aptos</text>
+<text x="14" y="86" font-size="11" fill="#475569">Move · Aptos CLI</text>
+<text x="14" y="112" font-size="10" fill="#94A3B8">repo <tspan fill="#0891B2">&#8599;</tspan></text><text x="14" y="126" font-size="10.5" fill="#0F172A" textLength="63" lengthAdjust="spacingAndGlyphs">Move_Aptos</text>
+<text x="14" y="150" font-size="9.5" fill="#94A3B8">prev <tspan fill="#475569">0xba5e…70a9</tspan></text><text x="14" y="165" font-size="9.5" fill="#94A3B8">hash <tspan fill="#0D9488">0x7cce…1104</tspan></text>
+</svg>

@@ -33,6 +33,10 @@ Visit: https://github.com/R0hit-Yadav
 
 Edit featured projects anytime in `projects.json` (order = display order). Logos live in `logos/`.
 
+The Action also writes one image per project to `cards/<repo>.svg` on the `projects` branch, so each card in the README is its own clickable link. **When you add or remove a project in `projects.json`, add or remove its `<a href=…><picture>…</picture></a>` row in the PROJECTS section of `README.md` too.**
+
+Note: GitHub strips `target="_blank"` from README links, so links open in the same tab. Ctrl/⌘-click or middle-click opens a new tab.
+
 ## 5. Self-host GitHub stats (recommended)
 
 The public `github-readme-stats.vercel.app` instance often rate-limits. Self-host:

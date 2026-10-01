@@ -45,31 +45,38 @@ impl Rohit {
 ```
 
 <!-- ============================== CHAINS ============================== -->
+<!-- One image per block so each opens its repo. Keep the tiles on one line: whitespace between them breaks the chain. -->
 
 <br/>
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains-light.svg">
-  <img width="100%" alt="Chains I build on: Rust, Solana, Aptos, Ethereum, Stellar, Bitcoin" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains-dark.svg">
-</picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains-header-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains-header-light.svg"><img width="100%" alt="LEDGER.TRACE" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains-header-dark.svg"></picture>
+
+<p align="center"><a href="https://github.com/R0hit-Yadav/Web3_Rust_X_Blockchain"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/0-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/0-light.svg"><img width="16.6%" alt="Genesis/Rust — Web3_Rust_X_Blockchain" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/0-dark.svg"></picture></a><a href="https://github.com/R0hit-Yadav/Solana_Token"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/1-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/1-light.svg"><img width="16.6%" alt="Solana — Solana_Token" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/1-dark.svg"></picture></a><a href="https://github.com/R0hit-Yadav/Move_Aptos"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/2-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/2-light.svg"><img width="16.6%" alt="Aptos — Move_Aptos" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/2-dark.svg"></picture></a><a href="https://github.com/R0hit-Yadav/DAO_Voting_System"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/3-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/3-light.svg"><img width="16.6%" alt="Ethereum — DAO_Voting_System" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/3-dark.svg"></picture></a><a href="https://github.com/R0hit-Yadav/Soroban_Integration"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/4-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/4-light.svg"><img width="16.6%" alt="Stellar — Soroban_Integration" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/4-dark.svg"></picture></a><a href="https://github.com/R0hit-Yadav/MIT_BITCOIN-2025"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/5-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/5-light.svg"><img width="16.6%" alt="Bitcoin — MIT_BITCOIN-2025" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/chains/5-dark.svg"></picture></a></p>
 
 <!-- ============================== STACK ============================== -->
 
 <br/>
 <p align="center"><code>STACK.INSTALLED</code></p>
 <p align="center">
-  <img src="https://skillicons.dev/icons?i=rust,solidity,ts,js,react,nodejs,py,docker,aws,git,linux,vscode&perline=12" alt="Rust, Solidity, TypeScript, JavaScript, React, Node.js, Python, Docker, AWS, Git, Linux, VS Code" />
+  <img src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/stack.svg" alt="Rust, Solidity, TypeScript, JavaScript, React, Node.js, Python, Docker, AWS, Git, Linux, VS Code" />
 </p>
 
 <!-- ============================== PROJECTS ============================== -->
-<!-- Live panel: rebuilt every 6h by .github/workflows/projects.yml onto the `projects` branch. Edit projects.json to change it. -->
+<!-- Live cards: rebuilt every 6h by .github/workflows/projects.yml onto the `projects` branch (cards/<repo>.svg).
+     To add/reorder: edit projects.json AND the card rows below (one <a> per repo). -->
 
 <br/>
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/projects.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/projects-light.svg">
-  <img width="100%" alt="Featured projects" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/projects.svg">
-</picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/projects-header.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/projects-header-light.svg"><img width="100%" alt="PROJECTS.LIST" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/projects-header.svg"></picture>
+
+<p align="center">
+<a href="https://github.com/R0hit-Yadav/Web3_Rust_X_Blockchain"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/Web3_Rust_X_Blockchain.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/Web3_Rust_X_Blockchain-light.svg"><img width="49%" alt="Web3 Rust X Blockchain" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/Web3_Rust_X_Blockchain.svg"></picture></a>
+<a href="https://github.com/R0hit-Yadav/Move_Aptos"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/Move_Aptos.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/Move_Aptos-light.svg"><img width="49%" alt="Move Aptos" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/Move_Aptos.svg"></picture></a>
+<br/>
+<a href="https://github.com/R0hit-Yadav/Solana_Token"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/Solana_Token.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/Solana_Token-light.svg"><img width="49%" alt="Solana Token" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/Solana_Token.svg"></picture></a>
+<a href="https://github.com/R0hit-Yadav/Soroban_Integration"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/Soroban_Integration.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/Soroban_Integration-light.svg"><img width="49%" alt="Soroban Integration" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/Soroban_Integration.svg"></picture></a>
+<br/>
+<a href="https://github.com/R0hit-Yadav/DAO_Voting_System"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/DAO_Voting_System.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/DAO_Voting_System-light.svg"><img width="49%" alt="DAO Voting System" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/DAO_Voting_System.svg"></picture></a>
+<a href="https://github.com/R0hit-Yadav/Hack-IIT-K-2025"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/Hack-IIT-K-2025.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/Hack-IIT-K-2025-light.svg"><img width="49%" alt="Hack IIT-K 2025" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/projects/cards/Hack-IIT-K-2025.svg"></picture></a>
+</p>
 
 <!-- ============================== STATS ============================== -->
 
@@ -110,11 +117,11 @@ impl Rohit {
 
 <div align="center">
 
-<a href="https://www.linkedin.com/in/rohit-yadav-611618260/"><img src="https://img.shields.io/badge/LinkedIn-0A101F?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSJ3aGl0ZSI+PHBhdGggZD0iTTIwLjQ0NyAyMC40NTJoLTMuNTU0di01LjU2OWMwLTEuMzI4LS4wMjctMy4wMzctMS44NTItMy4wMzctMS44NTMgMC0yLjEzNiAxLjQ0NS0yLjEzNiAyLjkzOXY1LjY2N0g5LjM1MVY5aDMuNDE0djEuNTYxaC4wNDZjLjQ3Ny0uOSAxLjYzNy0xLjg1IDMuMzctMS44NSAzLjYwMSAwIDQuMjY3IDIuMzcgNC4yNjcgNS40NTV2Ni4yODZ6TTUuMzM3IDcuNDMzYy0xLjE0NCAwLTIuMDYzLS45MjYtMi4wNjMtMi4wNjUgMC0xLjEzOC45Mi0yLjA2MyAyLjA2My0yLjA2MyAxLjE0IDAgMi4wNjQuOTI1IDIuMDY0IDIuMDYzIDAgMS4xMzktLjkyNSAyLjA2NS0yLjA2NCAyLjA2NXptMS43ODIgMTMuMDE5SDMuNTU1VjloMy41NjR2MTEuNDUyek0yMi4yMjUgMEgxLjc3MUMuNzkyIDAgMCAuNzc0IDAgMS43Mjl2MjAuNTQyQzAgMjMuMjI3Ljc5MiAyNCAxLjc3MSAyNGgyMC40NTFDMjMuMiAyNCAyNCAyMy4yMjcgMjQgMjIuMjcxVjEuNzI5QzI0IC43NzQgMjMuMiAwIDIyLjIyNSAweiIvPjwvc3ZnPg==" alt="LinkedIn" /></a>&nbsp;
-<a href="https://x.com/RohitYadav2312"><img src="https://img.shields.io/badge/X-0A101F?style=for-the-badge&logo=x&logoColor=22D3EE" alt="X" /></a>&nbsp;
-<a href="https://www.instagram.com/rohit_k_yadav._/"><img src="https://img.shields.io/badge/Instagram-0A101F?style=for-the-badge&logo=instagram&logoColor=A78BFA" alt="Instagram" /></a>&nbsp;
-<a href="https://discord.gg/gDgGe2Gq"><img src="https://img.shields.io/badge/Discord-0A101F?style=for-the-badge&logo=discord&logoColor=10B981" alt="Discord" /></a>&nbsp;
-<a href="mailto:rohitkyadav2312@gmail.com"><img src="https://img.shields.io/badge/Email-0A101F?style=for-the-badge&logo=gmail&logoColor=10B981" alt="Email" /></a>
+<a href="https://www.linkedin.com/in/rohit-yadav-611618260/"><img height="28" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/badges/linkedin.svg" alt="LinkedIn" /></a>&nbsp;
+<a href="https://x.com/RohitYadav2312"><img height="28" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/badges/x.svg" alt="X" /></a>&nbsp;
+<a href="https://www.instagram.com/rohit_k_yadav._/"><img height="28" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/badges/instagram.svg" alt="Instagram" /></a>&nbsp;
+<a href="https://discord.gg/gDgGe2Gq"><img height="28" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/badges/discord.svg" alt="Discord" /></a>&nbsp;
+<a href="mailto:rohitkyadav2312@gmail.com"><img height="28" src="https://raw.githubusercontent.com/R0hit-Yadav/R0hit-Yadav/main/assets/badges/email.svg" alt="Email" /></a>
 
 <br/><br/>
 

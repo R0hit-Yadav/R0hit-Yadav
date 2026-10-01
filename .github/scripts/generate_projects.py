@@ -246,6 +246,30 @@ def build(projects, theme="dark"):
     a('</svg>')
     return "".join(s)
 
+def build_header(theme="dark"):
+    """PROJECTS.LIST header strip, used above the per-card images in the README."""
+    H = 34
+    gid = f"acch_{theme}"
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" '
+            f'font-family="{FONT}" role="img" aria-label="Projects">'
+            f'<defs><linearGradient id="{gid}" x1="0" y1="0" x2="1" y2="0">'
+            f'<stop offset="0" stop-color="{VIOLET2}"><animate attributeName="stop-color" values="{VIOLET2};{CYAN};{EMERALD};{VIOLET2}" dur="10s" repeatCount="indefinite"/></stop>'
+            f'<stop offset="1" stop-color="{EMERALD}"><animate attributeName="stop-color" values="{EMERALD};{VIOLET2};{CYAN};{EMERALD}" dur="10s" repeatCount="indefinite"/></stop>'
+            '</linearGradient></defs>'
+            f'<text x="{MARGIN+2}" y="18" font-size="11" letter-spacing="2" fill="{CYAN}">PROJECTS.LIST</text>'
+            f'<text x="{MARGIN+130}" y="18" font-size="10" fill="{DIM}">./projects.sh --all · click a card to open the repo</text>'
+            f'<line x1="{MARGIN}" y1="28" x2="{W-MARGIN}" y2="28" stroke="url(#{gid})" stroke-width="1.5" opacity="0.7"/>'
+            '</svg>')
+
+def build_card(p, idx):
+    """Single card as its own image, so the README can wrap it in a repo link."""
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{CARD_W+2}" height="{CARD_H+2}" '
+            f'viewBox="0 0 {CARD_W+2} {CARD_H+2}" font-family="{FONT}" role="img" aria-label="{esc(p.get("name", ""))}">'
+            f'{card(p, 1, 1, idx)}</svg>')
+
+def card_slug(p):
+    return p.get("repo", "").rstrip("/").split("/")[-1]
+
 if __name__ == "__main__":
     src = sys.argv[1] if len(sys.argv) > 1 else "merged.json"
     outdir = sys.argv[2] if len(sys.argv) > 2 else "."
@@ -260,3 +284,11 @@ if __name__ == "__main__":
         with open(path, "w") as f:
             f.write(svg)
         print(f"wrote {path}: {theme}, {len(projects)} projects, {len(svg)//1024}KB")
+        # per-card images: cards/<repo>.svg / cards/<repo>-light.svg + header strip
+        suffix = "" if theme == "dark" else "-light"
+        os.makedirs(os.path.join(outdir, "cards"), exist_ok=True)
+        with open(os.path.join(outdir, f"projects-header{suffix}.svg"), "w") as f:
+            f.write(build_header(theme))
+        for i, p in enumerate(projects):
+            with open(os.path.join(outdir, "cards", f"{card_slug(p)}{suffix}.svg"), "w") as f:
+                f.write(build_card(p, i))

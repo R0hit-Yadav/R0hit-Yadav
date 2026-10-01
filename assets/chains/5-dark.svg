@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="196" height="186" viewBox="0 0 196 186" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace" role="img" aria-label="Bitcoin — MIT_BITCOIN-2025">
+<defs><filter id="g" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter></defs>
+<rect x="2" y="8" width="174" height="170" rx="10" fill="#F7931A" opacity="0" filter="url(#g)"><animate attributeName="opacity" values="0;0;.35;0;0" keyTimes="0;0.688;0.748;0.825;1" dur="8.00s" repeatCount="indefinite"/></rect>
+<rect x="2" y="8" width="174" height="170" rx="10" fill="#0C1426" stroke="rgba(34,211,238,0.28)"/>
+<rect x="2" y="8" width="174" height="170" rx="10" fill="none" stroke="#F7931A" stroke-width="1.4" opacity="0"><animate attributeName="opacity" values="0;0;1;.25;.25" keyTimes="0;0.688;0.748;0.825;1" dur="8.00s" repeatCount="indefinite"/></rect>
+<path d="M2 34h174" stroke="rgba(255,255,255,0.08)"/>
+<text x="14" y="25" font-size="10" letter-spacing="1.5" fill="#475569">BLOCK #05</text>
+<circle cx="162" cy="21" r="3.5" fill="#475569"><animate attributeName="fill" values="#475569;#475569;#10B981;#10B981;#10B981" keyTimes="0;0.688;0.748;0.825;1" dur="8.00s" repeatCount="indefinite"/></circle>
+<text x="14" y="64" font-size="17" font-weight="700" fill="#F7931A">Bitcoin</text>
+<text x="14" y="86" font-size="11" fill="#94A3B8">MIT Bitcoin '25</text>
+<text x="14" y="112" font-size="10" fill="#475569">repo <tspan fill="#22D3EE">&#8599;</tspan></text><text x="14" y="126" font-size="10.5" fill="#F8FAFC" textLength="101" lengthAdjust="spacingAndGlyphs">MIT_BITCOIN-2025</text>
+<text x="14" y="150" font-size="9.5" fill="#475569">prev <tspan fill="#94A3B8">0x8c1d…d1c0</tspan></text><text x="14" y="165" font-size="9.5" fill="#475569">hash <tspan fill="#F7931A">0x294f…89f6</tspan></text>
+</svg>
